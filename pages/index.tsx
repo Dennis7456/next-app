@@ -1,29 +1,28 @@
+import {
+  GetCharactersDocument,
+  GetCharactersQuery,
+  GetCharactersQueryVariables,
+} from '@/generated/graphql';
 import { gql, useQuery } from "@apollo/client";
 import { NextPage } from "next";
 
-const GET_CHARACTERS = gql`
-query {
-  characters {
-    results {
-      id
-      name
-      species
-      notInSchema
-    }
-  }
-}
-`;
-
 const Home: NextPage = () => {
-  const { loading, data } = useQuery(GET_CHARACTERS);
+  const { loading, data } = useQuery<
+  GetCharactersQuery,
+  GetCharactersQueryVariables
+  >(GetCharactersDocument);
+
+  const characters = data?.characters?.results;
 
   return (
     <div>
       <main>
         { loading && <p>Loading...</p>}
-
-        { data?.characters.results.map((character) => (
-          <p key={character.id}>{character.name}</p>
+        {characters &&
+          characters.map((character, index) => (
+          <p key={character?.id ?? index}>
+            {character?.name ?? "No name: something is wrong"}
+          </p>
         ))}
       </main>
     </div>
